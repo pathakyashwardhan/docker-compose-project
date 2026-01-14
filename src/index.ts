@@ -1,12 +1,21 @@
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+import { PrismaClient} from '@prisma/client';
+
+import { PrismaPg } from '@prisma/adapter-pg'
+
+
+const connectionString = `${process.env.DATABASE_URL}`
+
+const adapter = new PrismaPg({ connectionString })
+const client = new PrismaClient({ adapter })
 import express from "express";
 
 const app = express();
 
-const prismaClient = new PrismaClient();
+
 
 app.get("/", async (req, res) => {
-  const data =await prismaClient.user.findMany();
+  const data =await client.user.findMany();
   res.json({
     data
   });
@@ -14,10 +23,10 @@ app.get("/", async (req, res) => {
 
 app.post("/", async (req, res) => {
 
-    await prismaClient.user.create({
+    await client.user.create({
     data: {
-      username: Math.random.toString(),
-      password: Math.random.toString(),
+      username: Math.random().toString(),
+      password: Math.random().toString(),
     },
   });
   res.json({
